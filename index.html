@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Called It — Predict Your Friends. Prove You Know Them.</title>
+<meta name="description" content="The social prediction game for friend groups. Create bets, vote with Cred, and find out who really knows their friends best. No real money.">
+<meta property="og:title" content="Called It — Predict Your Friends">
+<meta property="og:description" content="The social prediction game for friend groups. No real money. Just bragging rights and consequences.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://calledit.one">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0A0A0F;
+  --bg-card: #12121A;
+  --bg-elevated: #1A1A25;
+  --accent: #00FF87;
+  --accent-dim: rgba(0, 255, 135, 0.12);
+  --accent-glow: rgba(0, 255, 135, 0.25);
+  --wrong: #FF4757;
+  --cred: #FFD700;
+  --anonymous: #9B59B6;
+  --ai: #F39C12;
+  --text: #FFFFFF;
+  --text-secondary: #8A8AA3;
+  --text-dim: #55556A;
+  --border: rgba(255,255,255,0.08);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══ NOISE TEXTURE ═══ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ═══ GLOW ORB ═══ */
+.glow-orb {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.15;
+  pointer-events: none;
+}
+.glow-green { background: var(--accent); top: -200px; right: -100px; }
+.glow-purple { background: var(--anonymous); bottom: -200px; left: -200px; opacity: 0.08; }
+
+/* ═══ LAYOUT ═══ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ═══ NAV ═══ */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 20px 0;
+  background: rgba(10, 10, 15, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.5px;
+  color: var(--accent);
+  text-decoration: none;
+}
+.logo span { color: var(--text); }
+.nav-cta {
+  background: var(--accent);
+  color: var(--bg);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  padding: 10px 24px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.nav-cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 24px var(--accent-glow);
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 120px 24px 80px;
+  overflow: hidden;
+}
+.hero-content { position: relative; z-index: 2; max-width: 720px; }
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(0, 255, 135, 0.2);
+  border-radius: 100px;
+  padding: 8px 20px;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 32px;
+  animation: fadeInUp 0.6s ease both;
+}
+.hero h1 {
+  font-weight: 900;
+  font-size: clamp(48px, 8vw, 88px);
+  line-height: 0.95;
+  letter-spacing: -3px;
+  margin-bottom: 28px;
+  animation: fadeInUp 0.6s ease 0.1s both;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero p {
+  font-size: clamp(17px, 2.5vw, 21px);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  max-width: 520px;
+  margin: 0 auto 48px;
+  animation: fadeInUp 0.6s ease 0.2s both;
+}
+.hero-ctas {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  animation: fadeInUp 0.6s ease 0.3s both;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 17px;
+  padding: 16px 36px;
+  border-radius: 100px;
+  text-decoration: none;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px var(--accent-glow);
+}
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: transparent;
+  color: var(--text);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  font-size: 17px;
+  padding: 16px 36px;
+  border-radius: 100px;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  transition: border-color 0.2s, background 0.2s;
+}
+.btn-secondary:hover {
+  border-color: var(--text-dim);
+  background: rgba(255,255,255,0.03);
+}
+
+/* ═══ DEMO CARD (floating in hero) ═══ */
+.hero-card {
+  margin-top: 64px;
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+.bet-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  max-width: 440px;
+  margin: 0 auto;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+.bet-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(0,255,135,0.15), transparent 50%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+.bet-type {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg-elevated);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-family: 'DM Mono', monospace;
+  margin-bottom: 16px;
+}
+.bet-question {
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.35;
+  margin-bottom: 20px;
+  letter-spacing: -0.3px;
+}
+.odds-bar {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.odds-fill-wrap {
+  flex: 1;
+  height: 36px;
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  overflow: hidden;
+  position: relative;
+}
+.odds-fill {
+  height: 100%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  font-family: 'DM Mono', monospace;
+  font-weight: 500;
+  font-size: 14px;
+  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.odds-fill.yes {
+  background: linear-gradient(90deg, var(--accent), rgba(0,255,135,0.6));
+  color: var(--bg);
+  width: 0;
+}
+.odds-fill.no {
+  background: rgba(255,255,255,0.08);
+  color: var(--text-secondary);
+  width: 0;
+}
+.odds-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  width: 32px;
+  text-align: right;
+}
+.bet-meta {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+}
+.bet-meta .cred { color: var(--cred); }
+
+/* ═══ HOW IT WORKS ═══ */
+.section {
+  padding: 120px 24px;
+  position: relative;
+}
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.section-title {
+  font-weight: 800;
+  font-size: clamp(32px, 5vw, 52px);
+  letter-spacing: -2px;
+  line-height: 1.05;
+  margin-bottom: 64px;
+}
+
+.steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+}
+.step {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 36px 28px;
+  position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+}
+.step:hover {
+  border-color: rgba(0,255,135,0.2);
+  transform: translateY(-4px);
+}
+.step-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--accent);
+  opacity: 0.2;
+  position: absolute;
+  top: 20px;
+  right: 24px;
+}
+.step-emoji { font-size: 36px; margin-bottom: 20px; }
+.step h3 {
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 10px;
+  letter-spacing: -0.3px;
+}
+.step p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ═══ FEATURES ═══ */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+.feature {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 32px 28px;
+  transition: border-color 0.3s;
+}
+.feature:hover { border-color: rgba(255,255,255,0.12); }
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+.feature-icon.green { background: var(--accent-dim); }
+.feature-icon.red { background: rgba(255,71,87,0.12); }
+.feature-icon.purple { background: rgba(155,89,182,0.12); }
+.feature-icon.amber { background: rgba(243,156,18,0.12); }
+.feature-icon.gold { background: rgba(255,215,0,0.12); }
+.feature-icon.blue { background: rgba(52,152,219,0.12); }
+.feature h3 {
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+.feature p {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* ═══ SOCIAL PROOF / CALLOUT ═══ */
+.callout {
+  text-align: center;
+  padding: 100px 24px;
+  position: relative;
+}
+.callout-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 64px 40px;
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+.callout-card::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 400px;
+  height: 400px;
+  background: var(--accent);
+  border-radius: 50%;
+  filter: blur(150px);
+  opacity: 0.07;
+}
+.callout-emoji { font-size: 56px; margin-bottom: 24px; position: relative; }
+.callout h2 {
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 40px);
+  letter-spacing: -1.5px;
+  margin-bottom: 16px;
+  position: relative;
+}
+.callout p {
+  color: var(--text-secondary);
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 480px;
+  margin: 0 auto 40px;
+  position: relative;
+}
+.callout .btn-primary { position: relative; }
+
+/* ═══ FOOTER ═══ */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 24px;
+}
+footer .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footer-links {
+  display: flex;
+  gap: 24px;
+  list-style: none;
+}
+.footer-links a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--text-secondary); }
+.footer-copy {
+  font-size: 13px;
+  color: var(--text-dim);
+  font-family: 'DM Mono', monospace;
+}
+
+/* ═══ ANIMATIONS ═══ */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  .hero { padding: 100px 20px 60px; min-height: auto; }
+  .hero h1 { letter-spacing: -2px; }
+  .section { padding: 80px 20px; }
+  .steps { grid-template-columns: 1fr; }
+  .features { grid-template-columns: 1fr; }
+  .callout-card { padding: 48px 24px; }
+  footer .container { flex-direction: column; text-align: center; }
+  .footer-links { justify-content: center; }
+  .bet-card { margin: 0 -4px; }
+}
+
+@media (max-width: 480px) {
+  .hero-ctas { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+  .nav-cta { padding: 8px 18px; font-size: 13px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <a href="/" class="logo">CALLED <span>IT</span></a>
+    <a href="#download" class="nav-cta">Get the App</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="glow-orb glow-green"></div>
+  <div class="glow-orb glow-purple"></div>
+  
+  <div class="hero-content">
+    <div class="hero-badge">🎯 Social prediction game for friend groups</div>
+    
+    <h1>Predict your<br>friends. <span class="accent">Prove it.</span></h1>
+    
+    <p>Create bets about anything. Vote with Cred. See who really knows their friends best. No real money — just bragging rights and consequences.</p>
+    
+    <div class="hero-ctas" id="download">
+      <a href="#" class="btn-primary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        App Store
+      </a>
+      <a href="#" class="btn-secondary">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.792 12 3.61 22.186a.996.996 0 01-.61-.92V2.734a1 1 0 01.609-.92zM14.852 13.06l2.341 2.342-9.46 5.384 7.12-7.726zm3.606-2.012l2.167 1.234a1 1 0 010 1.736l-2.167 1.234-2.58-2.602 2.58-2.602zM7.733 3.214l9.46 5.384-2.342 2.342-7.118-7.726z"/></svg>
+        Google Play
+      </a>
+    </div>
+
+    <!-- DEMO BET CARD -->
+    <div class="hero-card">
+      <div class="bet-card">
+        <div class="bet-type">✅❌ Yes / No</div>
+        <div class="bet-question">Will Martin actually show up to the gym this week?</div>
+        <div class="odds-bar">
+          <div class="odds-fill-wrap">
+            <div class="odds-fill yes" id="bar-yes">YES 73%</div>
+          </div>
+        </div>
+        <div class="odds-bar">
+          <div class="odds-fill-wrap">
+            <div class="odds-fill no" id="bar-no">NO 27%</div>
+          </div>
+        </div>
+        <div class="bet-meta">
+          <span class="cred">💰 50 Cred</span>
+          <span>·</span>
+          <span>6 votes</span>
+          <span>·</span>
+          <span>3d left</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section">
+  <div class="container">
+    <div class="section-label reveal">How it works</div>
+    <h2 class="section-title reveal">Three steps.<br>Zero real money.</h2>
+    
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-number">01</div>
+        <div class="step-emoji">🎯</div>
+        <h3>Drop a bet</h3>
+        <p>Create a prediction about anything — who's canceling plans, over/under on beers, or rate someone's cooking skills.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">02</div>
+        <div class="step-emoji">🗳️</div>
+        <h3>Everyone votes</h3>
+        <p>Your group votes with Cred. Watch the odds shift in real-time as people pick sides.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-number">03</div>
+        <div class="step-emoji">🔥</div>
+        <h3>Called it — or not</h3>
+        <p>When the truth comes out, winners take the pot. Losers face the consequences. Leaderboards update.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" style="padding-top: 40px;">
+  <div class="container">
+    <div class="section-label reveal">Everything you need</div>
+    <h2 class="section-title reveal">More than<br>just predictions.</h2>
+    
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-icon green">🎯</div>
+        <h3>Six bet types</h3>
+        <p>Yes/No, Who Will, Over/Under, When, Most Likely To, and Rate. Whatever the question — there's a bet for it.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon purple">🎭</div>
+        <h3>Anonymous mode</h3>
+        <p>Some questions are too good to ask out loud. Vote anonymously. No one sees who said what.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon amber">🤖</div>
+        <h3>AI Shit-Stirrer</h3>
+        <p>Running out of ideas? The AI watches your group and suggests bets that are scarily relevant.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon red">⚡</div>
+        <h3>Consequences</h3>
+        <p>Monthly losers buy pizza. Losing streaks mean embarrassing photos. Real stakes, no real money.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon gold">🏆</div>
+        <h3>Leaderboards</h3>
+        <p>Track your prediction accuracy. Earn badges. Compete for #1 in every group. Monthly resets keep it fresh.</p>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon blue">📤</div>
+        <h3>Share the drama</h3>
+        <p>Every resolution generates a card you can share. Show the world what your friends predicted about you.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA CALLOUT -->
+<section class="callout">
+  <div class="callout-card reveal">
+    <div class="callout-emoji">🎯</div>
+    <h2>Think you know<br>your friends?</h2>
+    <p>Start a group. Drop a bet. Find out who really pays attention.</p>
+    <a href="#download" class="btn-primary">Download Called It</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-copy">© 2026 Called It</div>
+    <ul class="footer-links">
+      <li><a href="/privacy">Privacy Policy</a></li>
+      <li><a href="/terms">Terms of Service</a></li>
+      <li><a href="mailto:hello@calledit.one">Contact</a></li>
+    </ul>
+  </div>
+</footer>
+
+<script>
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// Animate odds bars on load
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('bar-yes').style.width = '73%';
+    document.getElementById('bar-no').style.width = '27%';
+  }, 800);
+});
+</script>
+
+</body>
+</html>
