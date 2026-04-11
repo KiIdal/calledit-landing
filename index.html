@@ -263,6 +263,20 @@
       color: var(--text-dim);
       letter-spacing: 0.04em;
     }
+    .hero-trigger {
+      font-size: clamp(16px, 2.5vw, 20px);
+      color: var(--accent);
+      font-weight: 600;
+      margin-top: 8px;
+      letter-spacing: -0.2px;
+    }
+    .callout-drama {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
 
     /* ─── Hero Demo Card ─── */
     .hero-card {
@@ -957,7 +971,7 @@
       <div class="hero-inner">
         <h1 class="reveal">Predict everything.</h1>
         <p class="hero-sub reveal reveal-delay-1">Friends. Markets. The future.</p>
-        <p class="hero-body reveal reveal-delay-2">The social prediction platform. Vote on real-world events, predict your friends, and prove you know best. No real money — just bragging rights and consequences.</p>
+        <p class="hero-body reveal reveal-delay-2">The social prediction platform. Vote on real-world events, predict your friends, and prove you know best. No real money. Real consequences.</p>
 
         <div class="cta-group reveal reveal-delay-3">
           <a href="#download" class="btn-primary">
@@ -971,6 +985,8 @@
         </div>
 
         <p class="hero-caption reveal reveal-delay-4">Free. No real money. No crypto. No KYC.</p>
+
+        <p class="hero-trigger reveal reveal-delay-4">What would your friends bet on you?</p>
 
         <!-- Demo bet card -->
         <div class="hero-card reveal reveal-delay-4">
@@ -1121,12 +1137,12 @@
         <div class="feature-card reveal reveal-delay-2">
           <div class="feature-icon icon-amber">🤖</div>
           <h3>AI Shit-Stirrer</h3>
-          <p>Running out of ideas? The AI watches your group and suggests bets that are scarily relevant.</p>
+          <p>Group gone quiet? We fix that. The AI watches your group and drops the bets no one dared ask.</p>
         </div>
         <div class="feature-card reveal reveal-delay-1">
           <div class="feature-icon icon-red">⚡</div>
           <h3>Consequences</h3>
-          <p>Monthly losers buy pizza. Losing streaks mean embarrassing photos. Real stakes, no real money.</p>
+          <p>Lose → you pay for the group 🍕. Lose repeatedly → it gets worse. No real money. Someone still pays.</p>
         </div>
         <div class="feature-card reveal reveal-delay-2">
           <div class="feature-icon icon-gold">🏆</div>
@@ -1248,7 +1264,7 @@
   <section class="callout section" id="download">
     <div class="orb orb-green" style="top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.5;"></div>
     <div class="container" style="position:relative;z-index:1;">
-      <span class="callout-emoji reveal">🎯</span>
+      <p class="callout-drama reveal">73% thought Martin would cancel. He didn't.</p>
       <h2 class="reveal">Think you know better?</h2>
       <p class="reveal">Download Called It. Predict everything. Prove it.</p>
 
@@ -1263,7 +1279,7 @@
         </a>
       </div>
 
-      <p class="callout-caption reveal">Free forever. No real money. No gambling. Just ego.</p>
+      <p class="callout-caption reveal">Free forever. No real money. No gambling. Just ego on the line.</p>
     </div>
   </section>
 
