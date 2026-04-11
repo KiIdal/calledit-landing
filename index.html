@@ -1,760 +1,1366 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="color-scheme: dark;">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Called It — Predict Your Friends. Prove You Know Them.</title>
-<meta name="description" content="The social prediction game for friend groups. Create bets, vote with Cred, and find out who really knows their friends best. No real money.">
-<meta property="og:title" content="Called It — Predict Your Friends">
-<meta property="og:description" content="The social prediction game for friend groups. No real money. Just bragging rights and consequences.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://calledit.one">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Called It — Predict Everything.</title>
+  <meta name="description" content="The social prediction platform. Vote on real-world events, predict your friends, and prove you know best. No real money." />
 
-:root {
-  --bg: #0A0A0F;
-  --bg-card: #12121A;
-  --bg-elevated: #1A1A25;
-  --accent: #00FF87;
-  --accent-dim: rgba(0, 255, 135, 0.12);
-  --accent-glow: rgba(0, 255, 135, 0.25);
-  --wrong: #FF4757;
-  --cred: #FFD700;
-  --anonymous: #9B59B6;
-  --ai: #F39C12;
-  --text: #FFFFFF;
-  --text-secondary: #8A8AA3;
-  --text-dim: #55556A;
-  --border: rgba(255,255,255,0.08);
-}
+  <!-- OG -->
+  <meta property="og:title" content="Called It — Predict Everything." />
+  <meta property="og:description" content="The social prediction platform. Vote on real-world events, predict your friends, and prove you know best. No real money." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://calledit.one" />
+  <meta name="twitter:card" content="summary_large_image" />
 
-html { scroll-behavior: smooth; color-scheme: dark; }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Outfit', sans-serif;
-  overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
-}
+  <style>
+    /* ─── Design Tokens ─── */
+    :root {
+      --bg: #0A0A0F;
+      --bg-card: #12121A;
+      --bg-elevated: #1A1A25;
+      --accent: #00FF87;
+      --accent-dim: rgba(0,255,135,0.12);
+      --accent-glow: rgba(0,255,135,0.25);
+      --market: #3498DB;
+      --market-dim: rgba(52,152,219,0.12);
+      --market-glow: rgba(52,152,219,0.25);
+      --wrong: #FF4757;
+      --cred: #FFD700;
+      --text: #FFFFFF;
+      --text-secondary: #8A8AA3;
+      --text-dim: #55556A;
+      --border: rgba(255,255,255,0.08);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
 
-/* ═══ NOISE TEXTURE ═══ */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 9999;
-}
+    /* ─── Reset & Base ─── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-/* ═══ GLOW ORB ═══ */
-.glow-orb {
-  position: absolute;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.15;
-  pointer-events: none;
-}
-.glow-green { background: var(--accent); top: -200px; right: -100px; }
-.glow-purple { background: var(--anonymous); bottom: -200px; left: -200px; opacity: 0.08; }
+    html { scroll-behavior: smooth; color-scheme: dark; }
 
-/* ═══ LAYOUT ═══ */
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 24px;
-}
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
 
-/* ═══ NAV ═══ */
-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 100;
-  padding: 20px 0;
-  background: rgba(10, 10, 15, 0.8);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-}
-nav .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-.logo {
-  font-family: 'Outfit', sans-serif;
-  font-weight: 900;
-  font-size: 20px;
-  letter-spacing: -0.5px;
-  color: var(--accent);
-  text-decoration: none;
-}
-.logo span { color: var(--text); }
-.nav-cta {
-  background: var(--accent);
-  color: var(--bg);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
-  font-size: 14px;
-  padding: 10px 24px;
-  border-radius: 100px;
-  text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.nav-cta:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 24px var(--accent-glow);
-}
+    /* ─── Noise Texture ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      opacity: 0.03;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 128px 128px;
+    }
 
-/* ═══ HERO ═══ */
-.hero {
-  position: relative;
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 120px 24px 80px;
-  overflow: hidden;
-}
-.hero-content { position: relative; z-index: 2; max-width: 720px; }
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--accent-dim);
-  border: 1px solid rgba(0, 255, 135, 0.2);
-  border-radius: 100px;
-  padding: 8px 20px;
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  color: var(--accent);
-  margin-bottom: 32px;
-  animation: fadeInUp 0.6s ease both;
-}
-.hero h1 {
-  font-weight: 900;
-  font-size: clamp(48px, 8vw, 88px);
-  line-height: 0.95;
-  letter-spacing: -3px;
-  margin-bottom: 28px;
-  animation: fadeInUp 0.6s ease 0.1s both;
-  text-wrap: balance;
-}
-.hero h1 .accent { color: var(--accent); }
-.hero p {
-  font-size: clamp(17px, 2.5vw, 21px);
-  color: var(--text-secondary);
-  line-height: 1.6;
-  max-width: 520px;
-  margin: 0 auto 48px;
-  animation: fadeInUp 0.6s ease 0.2s both;
-}
-.hero-ctas {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  animation: fadeInUp 0.6s ease 0.3s both;
-}
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--accent);
-  color: var(--bg);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
-  font-size: 17px;
-  padding: 16px 36px;
-  border-radius: 100px;
-  text-decoration: none;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 32px var(--accent-glow);
-}
-.btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: transparent;
-  color: var(--text);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 600;
-  font-size: 17px;
-  padding: 16px 36px;
-  border-radius: 100px;
-  border: 1px solid var(--border);
-  text-decoration: none;
-  transition: border-color 0.2s, background 0.2s;
-}
-.btn-secondary:hover {
-  border-color: var(--text-dim);
-  background: rgba(255,255,255,0.03);
-}
+    /* ─── Glow Orbs ─── */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-green { background: var(--accent-glow); width: 600px; height: 600px; }
+    .orb-blue  { background: var(--market-glow); width: 500px; height: 500px; }
+    .orb-purple { background: rgba(138,43,226,0.12); width: 400px; height: 400px; }
 
-/* ═══ DEMO CARD (floating in hero) ═══ */
-.hero-card {
-  margin-top: 64px;
-  animation: fadeInUp 0.8s ease 0.4s both;
-}
-.bet-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 28px;
-  max-width: 440px;
-  margin: 0 auto;
-  text-align: left;
-  position: relative;
-  overflow: hidden;
-}
-.bet-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 20px;
-  padding: 1px;
-  background: linear-gradient(135deg, rgba(0,255,135,0.15), transparent 50%);
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-}
-.bet-type {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg-elevated);
-  border-radius: 100px;
-  padding: 4px 12px;
-  font-size: 12px;
-  color: var(--text-secondary);
-  font-family: 'DM Mono', monospace;
-  margin-bottom: 16px;
-}
-.bet-question {
-  font-weight: 700;
-  font-size: 19px;
-  line-height: 1.35;
-  margin-bottom: 20px;
-  letter-spacing: -0.3px;
-}
-.odds-bar {
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.odds-fill-wrap {
-  flex: 1;
-  height: 36px;
-  background: var(--bg-elevated);
-  border-radius: 10px;
-  overflow: hidden;
-  position: relative;
-}
-.odds-fill {
-  height: 100%;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  padding-left: 14px;
-  font-family: 'DM Mono', monospace;
-  font-weight: 500;
-  font-size: 14px;
-  transition: width 1.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.odds-fill.yes {
-  background: linear-gradient(90deg, var(--accent), rgba(0,255,135,0.6));
-  color: var(--bg);
-  width: 0;
-}
-.odds-fill.no {
-  background: rgba(255,255,255,0.08);
-  color: var(--text-secondary);
-  width: 0;
-}
-.odds-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-secondary);
-  width: 32px;
-  text-align: right;
-}
-.bet-meta {
-  display: flex;
-  gap: 16px;
-  margin-top: 16px;
-  font-size: 13px;
-  color: var(--text-dim);
-  font-family: 'DM Mono', monospace;
-}
-.bet-meta .cred { color: var(--cred); }
+    /* ─── Layout ─── */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
 
-/* ═══ HOW IT WORKS ═══ */
-.section {
-  padding: 120px 24px;
-  position: relative;
-}
-.section-label {
-  font-family: 'DM Mono', monospace;
-  font-size: 13px;
-  color: var(--accent);
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-.section-title {
-  font-weight: 800;
-  font-size: clamp(32px, 5vw, 52px);
-  letter-spacing: -2px;
-  line-height: 1.05;
-  margin-bottom: 64px;
-  text-wrap: balance;
-}
+    section, .section { padding: 100px 0; position: relative; overflow: hidden; }
 
-.steps {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
-}
-.step {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 36px 28px;
-  position: relative;
-  transition: border-color 0.3s, transform 0.3s;
-}
-.step:hover {
-  border-color: rgba(0,255,135,0.2);
-  transform: translateY(-4px);
-}
-.step-number {
-  font-family: 'DM Mono', monospace;
-  font-size: 48px;
-  font-weight: 500;
-  color: var(--accent);
-  opacity: 0.2;
-  position: absolute;
-  top: 20px;
-  right: 24px;
-}
-.step-emoji { font-size: 36px; margin-bottom: 20px; }
-.step h3 {
-  font-weight: 700;
-  font-size: 20px;
-  margin-bottom: 10px;
-  letter-spacing: -0.3px;
-}
-.step p {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.55;
-}
+    /* ─── Scroll Reveal ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
 
-/* ═══ FEATURES ═══ */
-.features {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-.feature {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 32px 28px;
-  transition: border-color 0.3s;
-}
-.feature:hover { border-color: rgba(255,255,255,0.12); }
-.feature-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 22px;
-  margin-bottom: 20px;
-}
-.feature-icon.green { background: var(--accent-dim); }
-.feature-icon.red { background: rgba(255,71,87,0.12); }
-.feature-icon.purple { background: rgba(155,89,182,0.12); }
-.feature-icon.amber { background: rgba(243,156,18,0.12); }
-.feature-icon.gold { background: rgba(255,215,0,0.12); }
-.feature-icon.blue { background: rgba(52,152,219,0.12); }
-.feature h3 {
-  font-weight: 700;
-  font-size: 18px;
-  margin-bottom: 8px;
-  letter-spacing: -0.2px;
-}
-.feature p {
-  font-size: 15px;
-  color: var(--text-secondary);
-  line-height: 1.55;
-}
+    /* ─── Typography ─── */
+    h1, h2, h3, h4 { font-family: 'Outfit', sans-serif; line-height: 1.15; }
 
-/* ═══ SOCIAL PROOF / CALLOUT ═══ */
-.callout {
-  text-align: center;
-  padding: 100px 24px;
-  position: relative;
-}
-.callout-card {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 64px 40px;
-  max-width: 680px;
-  margin: 0 auto;
-  position: relative;
-  overflow: hidden;
-}
-.callout-card::before {
-  content: '';
-  position: absolute;
-  top: -100px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 400px;
-  height: 400px;
-  background: var(--accent);
-  border-radius: 50%;
-  filter: blur(150px);
-  opacity: 0.07;
-}
-.callout-emoji { font-size: 56px; margin-bottom: 24px; position: relative; }
-.callout h2 {
-  font-weight: 800;
-  font-size: clamp(28px, 4vw, 40px);
-  letter-spacing: -1.5px;
-  margin-bottom: 16px;
-  position: relative;
-}
-.callout p {
-  color: var(--text-secondary);
-  font-size: 18px;
-  line-height: 1.6;
-  max-width: 480px;
-  margin: 0 auto 40px;
-  position: relative;
-}
-.callout .btn-primary { position: relative; }
+    h1 { text-wrap: balance; }
 
-/* ═══ FOOTER ═══ */
-footer {
-  border-top: 1px solid var(--border);
-  padding: 48px 24px;
-}
-footer .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 24px;
-}
-.footer-links {
-  display: flex;
-  gap: 24px;
-  list-style: none;
-}
-.footer-links a {
-  color: var(--text-dim);
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.2s;
-  padding: 13px 0;
-  display: inline-block;
-}
-.footer-links a:hover { color: var(--text-secondary); }
-.footer-copy {
-  font-size: 13px;
-  color: var(--text-dim);
-  font-family: 'DM Mono', monospace;
-}
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+    .section-label.blue { color: var(--market); }
 
-/* ═══ WAITLIST FORM ═══ */
-.waitlist-form {
-  width: 100%;
-  max-width: 480px;
-  margin: 0 auto;
-  animation: fadeInUp 0.6s ease 0.3s both;
-}
-.waitlist-row {
-  display: flex;
-  gap: 8px;
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 6px 6px 6px 20px;
-  transition: border-color 0.2s;
-}
-.waitlist-row:focus-within {
-  border-color: rgba(0, 255, 135, 0.4);
-}
-.waitlist-input {
-  flex: 1;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: var(--text);
-  font-family: 'Outfit', sans-serif;
-  font-size: 16px;
-  min-width: 0;
-}
-.waitlist-input::placeholder { color: var(--text-dim); }
-.waitlist-btn {
-  background: var(--accent);
-  color: var(--bg);
-  font-family: 'Outfit', sans-serif;
-  font-weight: 700;
-  font-size: 15px;
-  padding: 12px 24px;
-  border-radius: 100px;
-  border: none;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.waitlist-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px var(--accent-glow);
-}
-.waitlist-note {
-  font-size: 13px;
-  color: var(--text-dim);
-  margin-top: 12px;
-  font-family: 'DM Mono', monospace;
-  text-align: center;
-  animation: none;
-}
+    .section-title {
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.1;
+      text-wrap: balance;
+      margin-bottom: 20px;
+      white-space: pre-line;
+    }
 
-/* ═══ ANIMATIONS ═══ */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(24px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+    .section-body {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 600px;
+    }
 
-/* Scroll reveal */
-.reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
-}
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
+    /* ─── Nav ─── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 16px 0;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
 
-/* ═══ RESPONSIVE ═══ */
-@media (max-width: 768px) {
-  .hero { padding: 100px 20px 60px; min-height: auto; }
-  .hero h1 { letter-spacing: -2px; }
-  .section { padding: 80px 20px; }
-  .steps { grid-template-columns: 1fr; }
-  .features { grid-template-columns: 1fr; }
-  .callout-card { padding: 48px 24px; }
-  footer .container { flex-direction: column; text-align: center; }
-  .footer-links { justify-content: center; }
-  .bet-card { margin: 0 -4px; }
-}
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
 
-@media (max-width: 480px) {
-  .hero-ctas { flex-direction: column; align-items: center; }
-  .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
-  .nav-cta { padding: 8px 18px; font-size: 13px; }
-  .waitlist-row { flex-direction: column; border-radius: 16px; padding: 12px 16px; gap: 10px; }
-  .waitlist-btn { border-radius: 100px; padding: 14px 24px; }
-}
-</style>
+    .logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      color: var(--text);
+    }
+    .logo span { color: var(--accent); }
+
+    .nav-cta {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 14px;
+      padding: 10px 22px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; transform: scale(1.03); }
+
+    /* ─── Hero ─── */
+    .hero {
+      min-height: 90vh;
+      display: flex;
+      align-items: center;
+      padding: 80px 0 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 32px;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+
+    .hero h1 {
+      font-size: clamp(44px, 8vw, 88px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      font-size: clamp(26px, 4vw, 44px);
+      font-weight: 800;
+      color: var(--accent);
+      margin-top: -16px;
+    }
+
+    .hero-body {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 560px;
+      line-height: 1.65;
+    }
+
+    .cta-group {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 16px 30px;
+      border-radius: 100px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px var(--accent-glow);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      color: var(--text);
+      font-weight: 700;
+      font-size: 16px;
+      padding: 15px 30px;
+      border-radius: 100px;
+      border: 1.5px solid var(--border);
+      text-decoration: none;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .btn-secondary:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.25);
+    }
+
+    .hero-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── Hero Demo Card ─── */
+    .hero-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      max-width: 400px;
+      width: 100%;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--market));
+    }
+
+    .bet-badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .bet-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.04em;
+    }
+    .bet-badge-market {
+      background: var(--market-dim);
+      color: var(--market);
+      border: 1px solid rgba(52,152,219,0.25);
+    }
+    .bet-badge-type {
+      background: var(--accent-dim);
+      color: var(--accent);
+      border: 1px solid var(--accent-glow);
+    }
+
+    .card-question {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+
+    .odds-bars { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+
+    .odds-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .odds-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      width: 30px;
+      color: var(--text-secondary);
+    }
+
+    .odds-track {
+      flex: 1;
+      height: 6px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .odds-fill {
+      height: 100%;
+      border-radius: 100px;
+      width: 0;
+      transition: width 1s cubic-bezier(0.4,0,0.2,1) 0.9s;
+    }
+    .odds-fill-yes { background: var(--accent); }
+    .odds-fill-no  { background: var(--wrong); }
+    .odds-fill-market { background: var(--market); }
+
+    .odds-pct {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-secondary);
+      width: 28px;
+      text-align: right;
+    }
+
+    .card-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    /* ─── Two Ways Section ─── */
+    .two-ways {
+      background: linear-gradient(180deg, var(--bg) 0%, rgba(26,26,37,0.5) 100%);
+    }
+
+    .two-ways-header { text-align: center; margin-bottom: 56px; }
+
+    .mode-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .mode-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .mode-card:hover { transform: translateY(-4px); }
+
+    .mode-card.market-mode {
+      border-color: rgba(52,152,219,0.2);
+      box-shadow: 0 0 40px rgba(52,152,219,0.05);
+    }
+    .mode-card.market-mode:hover {
+      box-shadow: 0 12px 60px rgba(52,152,219,0.12);
+    }
+
+    .mode-card.friends-mode {
+      border-color: rgba(0,255,135,0.15);
+      box-shadow: 0 0 40px rgba(0,255,135,0.04);
+    }
+    .mode-card.friends-mode:hover {
+      box-shadow: 0 12px 60px rgba(0,255,135,0.1);
+    }
+
+    .mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 100px;
+      width: fit-content;
+    }
+    .mode-pill.blue { background: var(--market-dim); color: var(--market); border: 1px solid rgba(52,152,219,0.25); }
+    .mode-pill.green { background: var(--accent-dim); color: var(--accent); border: 1px solid var(--accent-glow); }
+
+    .mode-card h3 {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .mode-card p {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      flex: 1;
+    }
+
+    /* Market card mockup */
+    .market-card {
+      background: var(--bg-elevated);
+      border: 1px solid rgba(52,152,219,0.2);
+      border-left: 4px solid var(--market);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .market-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .market-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      color: var(--market);
+      background: var(--market-dim);
+      border: 1px solid rgba(52,152,219,0.25);
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+
+    .category-chip {
+      font-size: 11px;
+      color: var(--text-dim);
+      background: rgba(255,255,255,0.05);
+      padding: 3px 8px;
+      border-radius: 100px;
+    }
+
+    .market-card-question {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    /* Friend card mockup inside mode-card */
+    .friend-mock-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+    }
+
+    .friend-mock-question {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .two-ways-footer {
+      text-align: center;
+      margin-top: 48px;
+      font-size: 18px;
+      color: var(--text-secondary);
+    }
+
+    /* ─── How It Works ─── */
+    .how-section { text-align: center; }
+    .how-section .section-header { margin-bottom: 64px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .step {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      text-align: left;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .step:hover { transform: translateY(-4px); border-color: rgba(0,255,135,0.2); }
+
+    .step-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+
+    .step-emoji {
+      font-size: 32px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .step h3 {
+      font-size: 20px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .step p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ─── Features Grid ─── */
+    .features-section { text-align: center; }
+    .features-section .section-header { margin-bottom: 56px; }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-align: left;
+      transition: transform 0.3s, border-color 0.3s;
+    }
+    .feature-card:hover { transform: translateY(-4px); }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .icon-blue   { background: rgba(52,152,219,0.15); }
+    .icon-purple { background: rgba(138,43,226,0.15); }
+    .icon-amber  { background: rgba(255,160,0,0.15); }
+    .icon-red    { background: rgba(255,71,87,0.15); }
+    .icon-gold   { background: rgba(255,215,0,0.15); }
+    .icon-green  { background: var(--accent-dim); }
+
+    .feature-card h3 {
+      font-size: 17px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    /* ─── Comparison Section ─── */
+    .comparison-section {
+      background: linear-gradient(180deg, rgba(26,26,37,0.4) 0%, var(--bg) 100%);
+    }
+    .comparison-section .section-header { text-align: center; margin-bottom: 48px; }
+
+    .comparison-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 36px;
+      max-width: 620px;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .comparison-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--market), var(--accent));
+    }
+
+    .comparison-question {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-rows { display: flex; flex-direction: column; gap: 18px; margin-bottom: 24px; }
+
+    .comparison-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .comparison-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .comparison-track {
+      flex: 1;
+      height: 8px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .comparison-fill {
+      height: 100%;
+      border-radius: 100px;
+      width: 0;
+      transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .comparison-fill.blue  { background: var(--market); }
+    .comparison-fill.green { background: var(--accent); }
+
+    .comparison-pct {
+      font-family: 'DM Mono', monospace;
+      font-size: 16px;
+      font-weight: 500;
+      width: 42px;
+      text-align: right;
+    }
+    .comparison-pct.blue  { color: var(--market); }
+    .comparison-pct.green { color: var(--accent); }
+
+    .comparison-you-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .you-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .you-answer {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+    }
+
+    .comparison-insight {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      letter-spacing: 0.02em;
+    }
+
+    .comparison-footer {
+      text-align: center;
+      margin-top: 36px;
+      font-size: 16px;
+      color: var(--text-secondary);
+    }
+
+    /* ─── Dual Score Section ─── */
+    .dual-score-section {
+      text-align: center;
+    }
+    .dual-score-section .section-header { margin-bottom: 56px; }
+
+    .score-rings {
+      display: flex;
+      justify-content: center;
+      gap: 80px;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+
+    .score-ring-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .ring-svg-wrap {
+      position: relative;
+      width: 140px;
+      height: 140px;
+    }
+
+    .ring-svg-wrap svg {
+      transform: rotate(-90deg);
+    }
+
+    .ring-center-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 26px;
+      font-weight: 500;
+    }
+
+    .score-ring-fill {
+      stroke-dasharray: 314;
+      stroke-dashoffset: 314;
+      transition: stroke-dashoffset 1.4s cubic-bezier(0.4,0,0.2,1) 0.3s;
+      stroke-linecap: round;
+    }
+
+    .ring-label {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .ring-sub {
+      font-size: 13px;
+      color: var(--text-secondary);
+      max-width: 140px;
+      line-height: 1.4;
+      text-align: center;
+    }
+
+    .dual-score-quote {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 500px;
+      margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ─── Stats Section ─── */
+    .stats-section {
+      padding: 64px 0;
+    }
+
+    .stats-inner {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 48px 32px;
+    }
+
+    .stats-row {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      flex: 1;
+      min-width: 180px;
+      text-align: center;
+      padding: 0 32px;
+      border-right: 1px solid var(--border);
+    }
+    .stat-item:last-child { border-right: none; }
+
+    .stat-number {
+      font-family: 'DM Mono', monospace;
+      font-size: 52px;
+      font-weight: 500;
+      color: var(--accent);
+      display: block;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .stat-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      font-weight: 600;
+      display: block;
+    }
+
+    .stats-sub {
+      text-align: center;
+      margin-top: 32px;
+      font-size: 14px;
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace;
+    }
+
+    /* ─── Callout / Final CTA ─── */
+    .callout {
+      text-align: center;
+      padding: 120px 0;
+    }
+
+    .callout-emoji {
+      font-size: 56px;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    .callout h2 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+
+    .callout p {
+      font-size: 18px;
+      color: var(--text-secondary);
+      margin-bottom: 40px;
+    }
+
+    .callout-caption {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 20px;
+    }
+
+    /* ─── Footer ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0 32px;
+    }
+
+    footer .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .footer-copy {
+      font-size: 14px;
+      color: var(--text-dim);
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      gap: 0;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 13px 16px;
+      display: inline-block;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    .footer-credit {
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── Section Header helper ─── */
+    .section-header { margin-bottom: 48px; }
+
+    /* ─── Responsive ─── */
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr; gap: 20px; }
+      .features-grid { grid-template-columns: 1fr 1fr; }
+      .score-rings { gap: 48px; }
+    }
+
+    @media (max-width: 768px) {
+      section, .section { padding: 72px 0; }
+      .mode-cards { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .stat-item { border-right: none; border-bottom: 1px solid var(--border); padding: 24px 0; }
+      .stat-item:last-child { border-bottom: none; }
+      .score-rings { gap: 40px; }
+      .comparison-label, .you-label { width: 110px; font-size: 12px; }
+      footer .container { flex-direction: column; align-items: flex-start; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 38px; }
+      .hero-sub { font-size: 22px; }
+      .cta-group { flex-direction: column; align-items: stretch; }
+      .btn-primary, .btn-secondary { justify-content: center; }
+    }
+  </style>
 </head>
 <body>
 
-<!-- NAV -->
-<nav>
-  <div class="container">
-    <a href="/" class="logo">CALLED <span>IT</span></a>
-    <a href="#download" class="nav-cta">Join waitlist</a>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="glow-orb glow-green"></div>
-  <div class="glow-orb glow-purple"></div>
-  
-  <div class="hero-content">
-    <div class="hero-badge">🎯 Social prediction game for friend groups</div>
-    
-    <h1>Predict your<br>friends. <span class="accent">Prove it.</span></h1>
-    
-    <p>Bet on your friends. Win bragging rights. Suffer consequences.</p>
-
-    <div class="hero-ctas" id="download">
-      <form class="waitlist-form" name="waitlist" netlify>
-        <input type="hidden" name="form-name" value="waitlist">
-        <div class="waitlist-row">
-          <input type="email" name="email" placeholder="your@email.com" required class="waitlist-input">
-          <button type="submit" class="waitlist-btn">Notify me at launch</button>
-        </div>
-        <p class="waitlist-note">Be first to know when Called It drops.</p>
-      </form>
+  <!-- ─── NAV ─── -->
+  <nav>
+    <div class="container">
+      <a href="/" class="logo">CALLED <span>IT</span></a>
+      <a href="#download" class="nav-cta">Get the App</a>
     </div>
+  </nav>
 
-    <!-- DEMO BET CARD -->
-    <div class="hero-card">
-      <div class="bet-card">
-        <div class="bet-type">✅❌ Yes / No</div>
-        <div class="bet-question">Will Martin actually show up to the gym this week?</div>
-        <div class="odds-bar">
-          <div class="odds-fill-wrap">
-            <div class="odds-fill yes" id="bar-yes">YES 73%</div>
+  <!-- ─── HERO ─── -->
+  <section class="hero">
+    <div class="orb orb-green" style="top:-200px;left:-200px;opacity:0.6;"></div>
+    <div class="orb orb-blue" style="top:-100px;right:-150px;opacity:0.4;"></div>
+    <div class="container">
+      <div class="hero-inner">
+        <h1 class="reveal">Predict everything.</h1>
+        <p class="hero-sub reveal reveal-delay-1">Friends. Markets. The future.</p>
+        <p class="hero-body reveal reveal-delay-2">The social prediction platform. Vote on real-world events, predict your friends, and prove you know best. No real money — just bragging rights and consequences.</p>
+
+        <div class="cta-group reveal reveal-delay-3">
+          <a href="#download" class="btn-primary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+            Download for iOS
+          </a>
+          <a href="#download" class="btn-secondary">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3.18 23.76C3.06 23.84 2.94 23.88 2.81 23.88C2.57 23.88 2.35 23.77 2.18 23.56L2.15 23.52C2.05 23.37 2 23.19 2 23V1C2 0.81 2.05 0.63 2.15 0.48L2.18 0.44C2.35 0.23 2.57 0.12 2.81 0.12C2.94 0.12 3.06 0.16 3.18 0.24L14.26 6.6L11.09 9.77L3.18 23.76ZM15.4 7.27L4.5 1.01L18.19 8.91L15.4 7.27ZM18.19 15.09L4.5 22.99L15.4 16.73L18.19 15.09ZM20.5 13.5C21.17 13.11 21.17 10.89 20.5 10.5L18.86 9.57L15.89 12.54L18.86 15.46L20.5 13.5Z"/></svg>
+            Download for Android
+          </a>
+        </div>
+
+        <p class="hero-caption reveal reveal-delay-4">Free. No real money. No crypto. No KYC.</p>
+
+        <!-- Demo bet card -->
+        <div class="hero-card reveal reveal-delay-4">
+          <div class="bet-badges">
+            <span class="bet-badge bet-badge-market">🌐 Market: 62% YES</span>
+            <span class="bet-badge bet-badge-type">✅❌ Yes / No</span>
+          </div>
+          <p class="card-question">Will Martin actually show up to the gym this week?</p>
+          <div class="odds-bars">
+            <div class="odds-row">
+              <span class="odds-label">YES</span>
+              <div class="odds-track"><div class="odds-fill odds-fill-yes" id="bar-yes"></div></div>
+              <span class="odds-pct">73%</span>
+            </div>
+            <div class="odds-row">
+              <span class="odds-label">NO</span>
+              <div class="odds-track"><div class="odds-fill odds-fill-no" id="bar-no"></div></div>
+              <span class="odds-pct">27%</span>
+            </div>
+          </div>
+          <p class="card-meta">💰 50 Cred &nbsp;·&nbsp; 6 votes &nbsp;·&nbsp; 3d left</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── TWO WAYS TO PLAY ─── -->
+  <section class="two-ways section">
+    <div class="orb orb-blue" style="bottom:-100px;right:-100px;opacity:0.3;"></div>
+    <div class="container">
+      <div class="two-ways-header reveal">
+        <p class="section-label">Two ways to play</p>
+        <h2 class="section-title">Solo or social.&#10;Both are great.</h2>
+      </div>
+
+      <div class="mode-cards">
+        <!-- MARKET CARD -->
+        <div class="mode-card market-mode reveal">
+          <span class="mode-pill blue">🌍 Global Predictions</span>
+          <h3>Predict the world</h3>
+          <p>Hundreds of real predictions about politics, crypto, tech, sports, and culture. Powered by live market data. Vote with Cred. Build your Market Accuracy score. No friends required.</p>
+
+          <!-- GlobalBetCard mock -->
+          <div class="market-card">
+            <div class="market-card-header">
+              <span class="market-badge">🌍 TRENDING</span>
+              <span class="category-chip">₿ Crypto</span>
+            </div>
+            <p class="market-card-question">Will Bitcoin hit $100k by July?</p>
+            <div class="odds-bars">
+              <div class="odds-row">
+                <span class="odds-label">YES</span>
+                <div class="odds-track"><div class="odds-fill odds-fill-market" id="mkt-bar-yes"></div></div>
+                <span class="odds-pct" style="color:var(--market)">62%</span>
+              </div>
+              <div class="odds-row">
+                <span class="odds-label">NO</span>
+                <div class="odds-track"><div class="odds-fill odds-fill-no" id="mkt-bar-no"></div></div>
+                <span class="odds-pct">38%</span>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="odds-bar">
-          <div class="odds-fill-wrap">
-            <div class="odds-fill no" id="bar-no">NO 27%</div>
+
+        <!-- FRIENDS CARD -->
+        <div class="mode-card friends-mode reveal reveal-delay-2">
+          <span class="mode-pill green">👥 Friend Groups</span>
+          <h3>Predict your friends</h3>
+          <p>Create a group. Drop bets about people you actually know. Will Martin show up? Who cancels plans most? Anonymous votes. Real consequences. Leaderboards that matter.</p>
+
+          <!-- FriendBetCard mock -->
+          <div class="friend-mock-card">
+            <p class="friend-mock-question">Will Martin show up to the gym this week?</p>
+            <div class="odds-bars">
+              <div class="odds-row">
+                <span class="odds-label">YES</span>
+                <div class="odds-track"><div class="odds-fill odds-fill-yes" style="width:73%;"></div></div>
+                <span class="odds-pct">73%</span>
+              </div>
+              <div class="odds-row">
+                <span class="odds-label">NO</span>
+                <div class="odds-track"><div class="odds-fill odds-fill-no" style="width:27%;"></div></div>
+                <span class="odds-pct">27%</span>
+              </div>
+            </div>
+            <p class="card-meta" style="margin-top:12px;">💰 50 Cred &nbsp;·&nbsp; 6 votes</p>
           </div>
         </div>
-        <div class="bet-meta">
-          <span class="cred">💰 50 Cred</span>
-          <span>·</span>
-          <span>6 votes</span>
-          <span>·</span>
-          <span>3d left</span>
+      </div>
+
+      <p class="two-ways-footer reveal">
+        Use them separately. Use them together. <span style="color:var(--accent)">Better together.</span>
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── HOW IT WORKS ─── -->
+  <section class="how-section section">
+    <div class="container">
+      <div class="section-header text-center reveal">
+        <p class="section-label">How it works</p>
+        <h2 class="section-title" style="text-align:center;">Three steps.&#10;Zero real money.</h2>
+      </div>
+
+      <div class="steps">
+        <div class="step reveal">
+          <p class="step-number">STEP 01</p>
+          <span class="step-emoji">🌍</span>
+          <h3>Browse or create</h3>
+          <p>Scroll through live predictions or drop your own in a friend group. Six bet types: Yes/No, Who, Over/Under, When, Most Likely To, and Rate.</p>
+        </div>
+        <div class="step reveal reveal-delay-2">
+          <p class="step-number">STEP 02</p>
+          <span class="step-emoji">🗳️</span>
+          <h3>Vote with Cred</h3>
+          <p>Stake virtual Cred on your prediction. Watch the odds shift in real-time. See how your group compares to the market.</p>
+        </div>
+        <div class="step reveal reveal-delay-3">
+          <p class="step-number">STEP 03</p>
+          <span class="step-emoji">🔥</span>
+          <h3>Called it — or not</h3>
+          <p>When the truth comes out, winners take the pot. Losers face consequences. Your scores update. The leaderboard shifts.</p>
         </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- HOW IT WORKS -->
-<section class="section">
-  <div class="container">
-    <div class="section-label reveal">How it works</div>
-    <h2 class="section-title reveal">Three steps.<br>Zero real money.</h2>
-    
-    <div class="steps">
-      <div class="step reveal">
-        <div class="step-number">01</div>
-        <div class="step-emoji">🎯</div>
-        <h3>Drop a bet</h3>
-        <p>Create a prediction about anything — who's canceling plans, over/under on beers, or rate someone's cooking skills.</p>
+  <!-- ─── FEATURES GRID ─── -->
+  <section class="features-section section">
+    <div class="orb orb-purple" style="top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.4;"></div>
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Everything you need</p>
+        <h2 class="section-title">More than&#10;just predictions.</h2>
       </div>
-      <div class="step reveal">
-        <div class="step-number">02</div>
-        <div class="step-emoji">🗳️</div>
-        <h3>Everyone votes</h3>
-        <p>Your group votes with Cred. Watch the odds shift in real-time as people pick sides.</p>
-      </div>
-      <div class="step reveal">
-        <div class="step-number">03</div>
-        <div class="step-emoji">🔥</div>
-        <h3>Called it — or not</h3>
-        <p>When the truth comes out, winners take the pot. Losers face the consequences. Leaderboards update.</p>
+
+      <div class="features-grid">
+        <div class="feature-card reveal">
+          <div class="feature-icon icon-blue">🌍</div>
+          <h3>Live Market Data</h3>
+          <p>Real predictions powered by market data. Politics, crypto, tech, sports, culture. Updated daily.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon icon-purple">🎭</div>
+          <h3>Anonymous Mode</h3>
+          <p>Some questions are too good to ask out loud. Most Likely To and anonymous ratings let your group be brutally honest.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon icon-amber">🤖</div>
+          <h3>AI Shit-Stirrer</h3>
+          <p>Running out of ideas? The AI watches your group and suggests bets that are scarily relevant.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+          <div class="feature-icon icon-red">⚡</div>
+          <h3>Consequences</h3>
+          <p>Monthly losers buy pizza. Losing streaks mean embarrassing photos. Real stakes, no real money.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+          <div class="feature-icon icon-gold">🏆</div>
+          <h3>Dual Leaderboards</h3>
+          <p>Track your Prediction Score with friends and your Market Accuracy against the world. Two games in one.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-3">
+          <div class="feature-icon icon-green">📤</div>
+          <h3>Share the Drama</h3>
+          <p>Every result becomes a shareable card. Show the world what your friends predicted — or how you beat the market.</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FEATURES -->
-<section class="section" style="padding-top: 40px;">
-  <div class="container">
-    <div class="section-label reveal">Everything you need</div>
-    <h2 class="section-title reveal">More than<br>just predictions.</h2>
-    
-    <div class="features">
-      <div class="feature reveal">
-        <div class="feature-icon green">🎯</div>
-        <h3>Six bet types</h3>
-        <p>Yes/No, Who Will, Over/Under, When, Most Likely To, and Rate. Whatever the question — there's a bet for it.</p>
+  <!-- ─── MARKET VS FRIENDS COMPARISON ─── -->
+  <section class="comparison-section section">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label" style="text-align:center;">The edge</p>
+        <h2 class="section-title" style="text-align:center;">See where your group&#10;disagrees with the world.</h2>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon purple">🎭</div>
-        <h3>Anonymous mode</h3>
-        <p>Some questions are too good to ask out loud. Vote anonymously. No one sees who said what.</p>
+
+      <div class="comparison-card reveal">
+        <p class="comparison-question">Will Bitcoin hit $100k by July?</p>
+
+        <div class="comparison-rows">
+          <div class="comparison-row">
+            <span class="comparison-label">🌐 Market says</span>
+            <div class="comparison-track"><div class="comparison-fill blue" id="comp-bar-market"></div></div>
+            <span class="comparison-pct blue" id="comp-pct-market">0%</span>
+          </div>
+          <div class="comparison-row">
+            <span class="comparison-label">👥 Your group says</span>
+            <div class="comparison-track"><div class="comparison-fill green" id="comp-bar-friends"></div></div>
+            <span class="comparison-pct green" id="comp-pct-friends">0%</span>
+          </div>
+          <div class="comparison-you-row">
+            <span class="you-label">📊 You said:</span>
+            <span class="you-answer">YES ✓</span>
+          </div>
+        </div>
+
+        <p class="comparison-insight">// Your friends are more bullish than the market.</p>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon amber">🤖</div>
-        <h3>AI Shit-Stirrer</h3>
-        <p>Running out of ideas? The AI watches your group and suggests bets that are scarily relevant.</p>
+
+      <p class="comparison-footer reveal">See where your group agrees — and where they disagree — with the world.</p>
+    </div>
+  </section>
+
+  <!-- ─── DUAL SCORE ─── -->
+  <section class="dual-score-section section">
+    <div class="container">
+      <div class="section-header reveal">
+        <p class="section-label">Your identity</p>
+        <h2 class="section-title">Two scores.&#10;One identity.</h2>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon red">⚡</div>
-        <h3>Consequences</h3>
-        <p>Monthly losers buy pizza. Losing streaks mean embarrassing photos. Real stakes, no real money.</p>
+
+      <div class="score-rings reveal">
+        <!-- Prediction Score (green) -->
+        <div class="score-ring-item">
+          <div class="ring-svg-wrap">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="50" fill="none" stroke="rgba(0,255,135,0.1)" stroke-width="10"/>
+              <circle class="score-ring-fill" cx="70" cy="70" r="50" fill="none"
+                stroke="var(--accent)" stroke-width="10"
+                data-score="71"/>
+            </svg>
+            <div class="ring-center-text" style="color:var(--accent)">71%</div>
+          </div>
+          <span class="ring-label">🎯 Prediction Score</span>
+          <span class="ring-sub">How well you know your friends</span>
+        </div>
+
+        <!-- Market Accuracy (blue) -->
+        <div class="score-ring-item">
+          <div class="ring-svg-wrap">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="50" fill="none" stroke="rgba(52,152,219,0.1)" stroke-width="10"/>
+              <circle class="score-ring-fill" cx="70" cy="70" r="50" fill="none"
+                stroke="var(--market)" stroke-width="10"
+                data-score="58"/>
+            </svg>
+            <div class="ring-center-text" style="color:var(--market)">58%</div>
+          </div>
+          <span class="ring-label">🌍 Market Accuracy</span>
+          <span class="ring-sub">How well you read the world</span>
+        </div>
       </div>
-      <div class="feature reveal">
-        <div class="feature-icon gold">🏆</div>
-        <h3>Leaderboards</h3>
-        <p>Track your prediction accuracy. Earn badges. Compete for #1 in every group. Monthly resets keep it fresh.</p>
-      </div>
-      <div class="feature reveal">
-        <div class="feature-icon blue">📤</div>
-        <h3>Share the drama</h3>
-        <p>Every resolution generates a card you can share. Show the world what your friends predicted about you.</p>
+
+      <p class="dual-score-quote reveal">Some people know their friends. Some know the markets. The best know both.</p>
+    </div>
+  </section>
+
+  <!-- ─── STATS ─── -->
+  <section class="stats-section">
+    <div class="container">
+      <div class="stats-inner reveal">
+        <div class="stats-row">
+          <div class="stat-item">
+            <span class="stat-number" data-target="6" data-suffix="">6</span>
+            <span class="stat-label">bet types</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="10" data-suffix="">10</span>
+            <span class="stat-label">badges to earn</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number" data-target="500" data-suffix="+">500+</span>
+            <span class="stat-label">live predictions</span>
+          </div>
+        </div>
+        <p class="stats-sub">Built for groups of 4–8 close friends. Fueled by opinions. Settled by truth.</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- CTA CALLOUT -->
-<section class="callout">
-  <div class="callout-card reveal">
-    <div class="callout-emoji">🎯</div>
-    <h2>Think you know<br>your friends?</h2>
-    <p>Start a group. Drop a bet. Find out who really pays attention.</p>
-    <a href="#download" class="btn-primary">Join the waitlist</a>
-  </div>
-</section>
+  <!-- ─── FINAL CTA ─── -->
+  <section class="callout section" id="download">
+    <div class="orb orb-green" style="top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.5;"></div>
+    <div class="container" style="position:relative;z-index:1;">
+      <span class="callout-emoji reveal">🎯</span>
+      <h2 class="reveal">Think you know better?</h2>
+      <p class="reveal">Download Called It. Predict everything. Prove it.</p>
 
-<!-- FOOTER -->
-<footer>
-  <div class="container">
-    <div class="footer-copy">© 2026 Called It</div>
-    <ul class="footer-links">
-      <li><a href="/privacy">Privacy Policy</a></li>
-      <li><a href="/terms">Terms of Service</a></li>
-      <li><a href="mailto:hello@calledit.one">Contact</a></li>
-    </ul>
-  </div>
-</footer>
+      <div class="cta-group reveal">
+        <a href="#download" class="btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
+          Download for iOS
+        </a>
+        <a href="#download" class="btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76C3.06 23.84 2.94 23.88 2.81 23.88C2.57 23.88 2.35 23.77 2.18 23.56L2.15 23.52C2.05 23.37 2 23.19 2 23V1C2 0.81 2.05 0.63 2.15 0.48L2.18 0.44C2.35 0.23 2.57 0.12 2.81 0.12C2.94 0.12 3.06 0.16 3.18 0.24L14.26 6.6L11.09 9.77L3.18 23.76ZM15.4 7.27L4.5 1.01L18.19 8.91L15.4 7.27ZM18.19 15.09L4.5 22.99L15.4 16.73L18.19 15.09ZM20.5 13.5C21.17 13.11 21.17 10.89 20.5 10.5L18.86 9.57L15.89 12.54L18.86 15.46L20.5 13.5Z"/></svg>
+          Download for Android
+        </a>
+      </div>
 
-<script>
-// Scroll reveal
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible');
+      <p class="callout-caption reveal">Free forever. No real money. No gambling. Just ego.</p>
+    </div>
+  </section>
+
+  <!-- ─── FOOTER ─── -->
+  <footer>
+    <div class="container">
+      <div class="footer-copy">© 2026 Called It</div>
+      <ul class="footer-links">
+        <li><a href="/privacy">Privacy Policy</a></li>
+        <li><a href="/terms">Terms of Service</a></li>
+        <li><a href="mailto:hello@calledit.one">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-credit">
+      Predictions powered by market data · Built by Even Kildal
+    </div>
+  </footer>
+
+  <!-- ─── JAVASCRIPT ─── -->
+  <script>
+    // 1. Scroll reveal
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          if (entry.target.classList.contains('comparison-card')) animateComparison();
+          if (entry.target.classList.contains('score-rings')) animateScoreRings();
+          if (entry.target.classList.contains('stats-section')) animateStats();
+        }
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal, .comparison-card, .score-rings, .stats-section').forEach(el => observer.observe(el));
+
+    // 2. Hero odds bars (animate on load)
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        const barYes = document.getElementById('bar-yes');
+        const barNo  = document.getElementById('bar-no');
+        const mktYes = document.getElementById('mkt-bar-yes');
+        const mktNo  = document.getElementById('mkt-bar-no');
+        if (barYes) barYes.style.width = '73%';
+        if (barNo)  barNo.style.width  = '27%';
+        if (mktYes) mktYes.style.width = '62%';
+        if (mktNo)  mktNo.style.width  = '38%';
+      }, 800);
+    });
+
+    // 3. Counter animation helper
+    function countUp(el, target, suffix, duration) {
+      let start = 0;
+      const step = target / (duration / 16);
+      const timer = setInterval(() => {
+        start += step;
+        if (start >= target) { start = target; clearInterval(timer); }
+        el.textContent = Math.floor(start) + suffix;
+      }, 16);
     }
-  });
-}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
 
-document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    // 4. Comparison card animation
+    let compAnimated = false;
+    function animateComparison() {
+      if (compAnimated) return; compAnimated = true;
+      setTimeout(() => {
+        const barMkt  = document.getElementById('comp-bar-market');
+        const barFrnd = document.getElementById('comp-bar-friends');
+        const pctMkt  = document.getElementById('comp-pct-market');
+        const pctFrnd = document.getElementById('comp-pct-friends');
+        if (barMkt)  barMkt.style.width  = '62%';
+        if (barFrnd) barFrnd.style.width = '78%';
+        if (pctMkt)  countUp(pctMkt,  62, '%', 1200);
+        if (pctFrnd) countUp(pctFrnd, 78, '%', 1200);
+      }, 300);
+    }
 
-// Animate odds bars on load
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    document.getElementById('bar-yes').style.width = '73%';
-    document.getElementById('bar-no').style.width = '27%';
-  }, 800);
-});
-</script>
+    // 5. Score ring animation
+    let ringsAnimated = false;
+    function animateScoreRings() {
+      if (ringsAnimated) return; ringsAnimated = true;
+      const circumference = 2 * Math.PI * 50; // r=50
+      document.querySelectorAll('.score-ring-fill').forEach(ring => {
+        const score = parseInt(ring.dataset.score);
+        const offset = circumference - (score / 100) * circumference;
+        setTimeout(() => { ring.style.strokeDashoffset = offset; }, 300);
+      });
+    }
 
+    // 6. Stats counter animation
+    let statsAnimated = false;
+    function animateStats() {
+      if (statsAnimated) return; statsAnimated = true;
+      document.querySelectorAll('.stat-number').forEach(el => {
+        const target = parseInt(el.dataset.target);
+        const suffix = el.dataset.suffix || '';
+        countUp(el, target, suffix, 1200);
+      });
+    }
+  </script>
 </body>
 </html>
