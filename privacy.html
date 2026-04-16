@@ -151,13 +151,13 @@ footer p {
   <tr><td><strong>Email address</strong></td><td>Account creation, login, and essential service communications</td></tr>
   <tr><td><strong>Password</strong> (if email signup)</td><td>Account authentication — stored as a salted hash, never in plain text</td></tr>
   <tr><td><strong>Profile photo</strong> (optional)</td><td>Avatar displayed to group members</td></tr>
-  <tr><td><strong>Bets, votes, and group content</strong></td><td>Core app functionality — predictions you create and participate in</td></tr>
+  <tr><td><strong>Predictions, votes, and group content</strong></td><td>Core app functionality — predictions you create and participate in</td></tr>
 </table>
 
 <h3>2.2 Data collected automatically</h3>
 <table>
   <tr><th>Data</th><th>Purpose</th></tr>
-  <tr><td><strong>Device push token</strong></td><td>Sending you notifications about bet results, group activity, etc.</td></tr>
+  <tr><td><strong>Device push token</strong></td><td>Sending you notifications about prediction results, group activity, etc.</td></tr>
   <tr><td><strong>Device type and OS version</strong></td><td>Ensuring the app works correctly on your device</td></tr>
   <tr><td><strong>App usage data</strong></td><td>Understanding how features are used so we can improve the app</td></tr>
   <tr><td><strong>Crash reports</strong></td><td>Identifying and fixing bugs</td></tr>
@@ -177,7 +177,7 @@ footer p {
 <p>We use your data for these purposes and no others:</p>
 <ul>
   <li><strong>Providing the service:</strong> Creating your account, joining groups, making predictions, tracking leaderboards, and delivering notifications</li>
-  <li><strong>AI features:</strong> Generating bet suggestions based on your group's activity (processed via Anthropic's Claude API — see Section 5)</li>
+  <li><strong>AI features:</strong> Generating prediction suggestions based on your group's activity (processed via Anthropic's Claude API — see Section 5)</li>
   <li><strong>Advertising:</strong> Displaying ads via Google AdMob to non-Pro users</li>
   <li><strong>Payments:</strong> Processing Pro subscriptions via RevenueCat and Apple/Google's payment systems</li>
   <li><strong>Improving the app:</strong> Analyzing usage patterns and crash reports to fix bugs and build better features</li>
@@ -191,10 +191,11 @@ footer p {
 <h2>4. Virtual Currency (Cred)</h2>
 <p>Called It uses a virtual currency called "Cred" for in-app predictions. To be clear:</p>
 <ul>
-  <li>Cred has <strong>no real-world monetary value</strong></li>
-  <li>Cred <strong>cannot be exchanged, transferred, sold, or converted</strong> to real currency</li>
-  <li>Cred <strong>cannot be withdrawn or cashed out</strong> in any way</li>
-  <li>Called It is <strong>not gambling</strong> — no real money is wagered, won, or lost</li>
+  <li>Cred has <strong>no real-world monetary value</strong> — it's a point system, like Duolingo XP or Reddit karma</li>
+  <li>Cred <strong>cannot be purchased with real money</strong> — it's earned through gameplay and monthly refills</li>
+  <li>Cred <strong>cannot be exchanged, transferred, sold, or converted</strong> to real currency or anything of value</li>
+  <li>Cred <strong>cannot be withdrawn, cashed out, or redeemed</strong> in any way</li>
+  <li>Called It is <strong>not gambling</strong> — no real money, cryptocurrency, or items of value are wagered, won, or lost</li>
   <li>We do not collect any financial or banking information from users</li>
 </ul>
 
@@ -223,8 +224,8 @@ footer p {
   </tr>
   <tr>
     <td><strong>Anthropic (Claude API)</strong></td>
-    <td>AI bet suggestions</td>
-    <td>Group names, member first names, bet questions and outcomes (no email, no identifiers)</td>
+    <td>AI prediction suggestions</td>
+    <td>Group names, member first names, prediction questions and outcomes (no email, no identifiers)</td>
     <td><a href="https://www.anthropic.com/privacy" target="_blank">Link</a></td>
   </tr>
   <tr>
@@ -256,7 +257,7 @@ footer p {
   <li>Passwords are hashed using bcrypt — we cannot read your password</li>
   <li>All connections use HTTPS/TLS encryption</li>
   <li>We implement Row Level Security (RLS) to ensure users can only access data they are authorized to see</li>
-  <li>Anonymous bet votes are stored with technical safeguards to prevent identification of voters</li>
+  <li>Anonymous prediction votes are stored with technical safeguards to prevent identification of voters</li>
 </ul>
 
 <h2>8. Data Retention</h2>
@@ -300,8 +301,8 @@ footer p {
 </ul>
 
 <h2>10. Children's Privacy</h2>
-<p>Called It is rated <strong>17+</strong> (Apple App Store) and <strong>Mature 17+</strong> (Google Play) due to simulated gambling content. The app is not intended for use by anyone under the age of 18. We do not knowingly collect personal data from users under 18.</p>
-<p>If we become aware that we have collected data from a user under 18, we will delete that data immediately. If you believe someone under 18 has provided us with personal data, please contact us at <a href="mailto:hello@calledit.one">hello@calledit.one</a>.</p>
+<p>Called It is rated <strong>12+</strong> (Apple App Store) and <strong>Teen</strong> (Google Play). <strong>Called It is not a gambling app</strong> — Cred is a virtual point system with no real-world value, like Duolingo XP or Reddit karma. The app is not intended for use by anyone under the age of 13. We do not knowingly collect personal data from users under 13.</p>
+<p>If we become aware that we have collected data from a user under 13, we will delete that data immediately. If you believe someone under 13 has provided us with personal data, please contact us at <a href="mailto:hello@calledit.one">hello@calledit.one</a>.</p>
 
 <h2>11. International Data Transfers</h2>
 <p>Your data may be transferred to and processed in countries other than your own, including the United States (where our infrastructure providers operate). We ensure appropriate safeguards are in place, including Standard Contractual Clauses where required by GDPR.</p>
