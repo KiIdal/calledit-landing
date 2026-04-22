@@ -951,6 +951,136 @@
       .cta-group { flex-direction: column; align-items: stretch; }
       .btn-primary, .btn-secondary { justify-content: center; }
     }
+
+    /* ─── Android Notify Modal ─── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .modal-backdrop.open {
+      display: flex;
+      opacity: 1;
+    }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      max-width: 440px;
+      width: 100%;
+      padding: 36px 32px;
+      position: relative;
+      transform: translateY(12px);
+      transition: transform 0.25s ease;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0); }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 24px;
+      line-height: 1;
+      cursor: pointer;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+    }
+    .modal-close:hover { background: var(--bg-elevated); color: var(--text); }
+    .modal h3 {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .modal p {
+      color: var(--text-secondary);
+      font-size: 15px;
+      margin-bottom: 22px;
+      line-height: 1.5;
+    }
+    .modal form { display: flex; flex-direction: column; gap: 12px; }
+    .modal input[type="email"] {
+      background: var(--bg-elevated);
+      border: 1.5px solid var(--border);
+      color: var(--text);
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius-sm);
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .modal input[type="email"]:focus { border-color: var(--accent); }
+    .modal input[type="email"]::placeholder { color: var(--text-dim); }
+    .modal button[type="submit"] {
+      background: var(--accent);
+      color: #000;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 24px;
+      border: none;
+      border-radius: 100px;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .modal button[type="submit"]:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 24px var(--accent-glow);
+    }
+    .modal button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .modal-note {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      margin-bottom: 0;
+      text-align: center;
+    }
+    .modal-success {
+      text-align: center;
+      padding: 8px 0;
+    }
+    .modal-success .check {
+      width: 56px;
+      height: 56px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 28px;
+      font-weight: 900;
+    }
+    .modal-error {
+      color: var(--wrong);
+      font-size: 13px;
+      margin: 0;
+      min-height: 16px;
+    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -978,9 +1108,9 @@
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
             Download for iOS
           </a>
-          <a href="#download" class="btn-secondary">
+          <a href="#notify" class="btn-secondary js-notify-open">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3.18 23.76C3.06 23.84 2.94 23.88 2.81 23.88C2.57 23.88 2.35 23.77 2.18 23.56L2.15 23.52C2.05 23.37 2 23.19 2 23V1C2 0.81 2.05 0.63 2.15 0.48L2.18 0.44C2.35 0.23 2.57 0.12 2.81 0.12C2.94 0.12 3.06 0.16 3.18 0.24L14.26 6.6L11.09 9.77L3.18 23.76ZM15.4 7.27L4.5 1.01L18.19 8.91L15.4 7.27ZM18.19 15.09L4.5 22.99L15.4 16.73L18.19 15.09ZM20.5 13.5C21.17 13.11 21.17 10.89 20.5 10.5L18.86 9.57L15.89 12.54L18.86 15.46L20.5 13.5Z"/></svg>
-            Download for Android
+            Android — notify me
           </a>
         </div>
 
@@ -1273,9 +1403,9 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/></svg>
           Download for iOS
         </a>
-        <a href="#download" class="btn-secondary">
+        <a href="#notify" class="btn-secondary js-notify-open">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3.18 23.76C3.06 23.84 2.94 23.88 2.81 23.88C2.57 23.88 2.35 23.77 2.18 23.56L2.15 23.52C2.05 23.37 2 23.19 2 23V1C2 0.81 2.05 0.63 2.15 0.48L2.18 0.44C2.35 0.23 2.57 0.12 2.81 0.12C2.94 0.12 3.06 0.16 3.18 0.24L14.26 6.6L11.09 9.77L3.18 23.76ZM15.4 7.27L4.5 1.01L18.19 8.91L15.4 7.27ZM18.19 15.09L4.5 22.99L15.4 16.73L18.19 15.09ZM20.5 13.5C21.17 13.11 21.17 10.89 20.5 10.5L18.86 9.57L15.89 12.54L18.86 15.46L20.5 13.5Z"/></svg>
-          Download for Android
+          Android — notify me
         </a>
       </div>
 
@@ -1297,6 +1427,40 @@
       Predictions powered by market data · Built by Even Kildal
     </div>
   </footer>
+
+  <!-- ─── Netlify form detector (hidden, required for build-time detection) ─── -->
+  <form name="android-waitlist" netlify netlify-honeypot="bot-field" hidden>
+    <input type="email" name="email" />
+    <input type="text" name="bot-field" />
+  </form>
+
+  <!-- ─── Android waitlist modal ─── -->
+  <div class="modal-backdrop" id="notify-modal" role="dialog" aria-modal="true" aria-labelledby="notify-title" hidden>
+    <div class="modal">
+      <button type="button" class="modal-close js-notify-close" aria-label="Close">&times;</button>
+
+      <div class="modal-form-wrap">
+        <h3 id="notify-title">Android is on the way.</h3>
+        <p>Drop your email and we'll ping you the moment it hits the Play Store. No spam, no newsletter.</p>
+
+        <form name="android-waitlist" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="notify-form" novalidate>
+          <input type="hidden" name="form-name" value="android-waitlist" />
+          <p hidden><label>Don't fill: <input name="bot-field" /></label></p>
+
+          <input type="email" name="email" id="notify-email" placeholder="you@example.com" required autocomplete="email" />
+          <button type="submit" id="notify-submit">Notify me</button>
+          <p class="modal-error" id="notify-error" role="alert"></p>
+          <p class="modal-note">We'll only email you once, when Android launches.</p>
+        </form>
+      </div>
+
+      <div class="modal-success hidden" id="notify-success">
+        <div class="check">✓</div>
+        <h3>You're on the list.</h3>
+        <p>We'll email you the second Called It drops on Android.</p>
+      </div>
+    </div>
+  </div>
 
   <!-- ─── JAVASCRIPT ─── -->
   <script>
@@ -1377,6 +1541,97 @@
         countUp(el, target, suffix, 1200);
       });
     }
+
+    // 7. Android waitlist modal
+    (function () {
+      const modal = document.getElementById('notify-modal');
+      if (!modal) return;
+
+      const form = document.getElementById('notify-form');
+      const formWrap = modal.querySelector('.modal-form-wrap');
+      const success = document.getElementById('notify-success');
+      const emailInput = document.getElementById('notify-email');
+      const submitBtn = document.getElementById('notify-submit');
+      const errorEl = document.getElementById('notify-error');
+
+      function openModal(e) {
+        if (e) e.preventDefault();
+        modal.hidden = false;
+        // Force reflow so the transition runs
+        void modal.offsetWidth;
+        modal.classList.add('open');
+        setTimeout(() => emailInput && emailInput.focus(), 50);
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+        setTimeout(() => {
+          modal.hidden = true;
+          // Reset for next open
+          formWrap.classList.remove('hidden');
+          success.classList.add('hidden');
+          errorEl.textContent = '';
+          form.reset();
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Notify me';
+        }, 200);
+      }
+
+      document.querySelectorAll('.js-notify-open').forEach(el => {
+        el.addEventListener('click', openModal);
+      });
+      modal.querySelectorAll('.js-notify-close').forEach(el => {
+        el.addEventListener('click', closeModal);
+      });
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+      });
+
+      function encode(data) {
+        return Object.keys(data)
+          .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+          .join('&');
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.textContent = '';
+
+        const email = emailInput.value.trim();
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          errorEl.textContent = 'Please enter a valid email.';
+          emailInput.focus();
+          return;
+        }
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending…';
+
+        try {
+          const res = await fetch('/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: encode({
+              'form-name': 'android-waitlist',
+              'email': email,
+              'bot-field': ''
+            })
+          });
+          if (!res.ok) throw new Error('Submission failed: ' + res.status);
+          formWrap.classList.add('hidden');
+          success.classList.remove('hidden');
+        } catch (err) {
+          errorEl.textContent = 'Something went wrong. Try again in a moment.';
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Notify me';
+        }
+      });
+    })();
   </script>
 </body>
 </html>
