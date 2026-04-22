@@ -3,15 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Called It — Predict Everything.</title>
-  <meta name="description" content="The social prediction game. Vote on real-world events, predict your friends, and prove you know best. Virtual currency only. Not gambling." />
+  <meta name="theme-color" content="#0A0A0F" />
 
-  <!-- OG -->
-  <meta property="og:title" content="Called It — Predict Everything." />
-  <meta property="og:description" content="The social prediction game. Vote on real-world events, predict your friends, and prove you know best. Virtual currency only. Not gambling." />
+  <title>Called It — Predict everything. Friends. Markets. The future.</title>
+  <meta name="description" content="The social prediction game. Vote on real-world events, predict your friends, and prove you know best. Virtual Cred only — not gambling, no real money. Free on iOS." />
+  <link rel="canonical" href="https://calledit.one/" />
+
+  <!-- Favicons -->
+  <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:site_name" content="Called It" />
+  <meta property="og:title" content="Called It — Predict everything." />
+  <meta property="og:description" content="The social prediction game. Predict your friends, predict the world. Virtual Cred only — not gambling. Free on iOS." />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://calledit.one" />
+  <meta property="og:url" content="https://calledit.one/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:image" content="https://calledit.one/assets/og-image.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Called It — The social prediction game. Predict everything." />
+
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Called It — Predict everything." />
+  <meta name="twitter:description" content="The social prediction game. Predict your friends, predict the world. Virtual Cred only — not gambling." />
+  <meta name="twitter:image" content="https://calledit.one/assets/og-image.png" />
+  <meta name="twitter:image:alt" content="Called It — The social prediction game." />
+
+  <!-- Structured data: App listing -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Called It",
+    "description": "The social prediction game. Vote on real-world events, predict your friends, and prove you know best. Virtual Cred only — not gambling.",
+    "applicationCategory": "GameApplication",
+    "operatingSystem": "iOS",
+    "url": "https://calledit.one/",
+    "downloadUrl": "https://apps.apple.com/us/app/called-it-predict-friends/id6762042980",
+    "image": "https://calledit.one/assets/og-image.png",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "author": {
+      "@type": "Person",
+      "name": "Even Kildal"
+    }
+  }
+  </script>
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -952,6 +997,163 @@
       .btn-primary, .btn-secondary { justify-content: center; }
     }
 
+    /* ─── Screenshots Section ─── */
+    .screenshots-section {
+      position: relative;
+      overflow: hidden;
+    }
+    .phones-row {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      margin-top: 48px;
+    }
+    .phone-frame {
+      position: relative;
+      width: 240px;
+      height: 500px;
+      background: linear-gradient(145deg, #1a1a25, #0f0f17);
+      border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 38px;
+      padding: 10px;
+      box-shadow:
+        0 20px 60px rgba(0,0,0,0.5),
+        0 0 0 1px rgba(255,255,255,0.04) inset;
+      flex-shrink: 0;
+      transition: transform 0.3s ease;
+    }
+    .phone-frame:hover { transform: translateY(-6px); }
+    .phone-frame.phone-center {
+      width: 260px;
+      height: 540px;
+      margin-bottom: 0;
+    }
+    .phone-frame.phone-side {
+      margin-bottom: 20px;
+      opacity: 0.85;
+    }
+    .phone-frame::before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 20px;
+      background: #000;
+      border-radius: 12px;
+      z-index: 2;
+    }
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      border-radius: 30px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .phone-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .phone-placeholder {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-dim);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+    }
+    .phone-placeholder .phone-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      opacity: 0.4;
+      display: block;
+    }
+    .phone-placeholder .phone-label {
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 8px;
+      letter-spacing: 0.08em;
+    }
+    .phone-placeholder .phone-subtext {
+      color: var(--text-dim);
+      font-size: 10px;
+      opacity: 0.6;
+    }
+    .screenshots-footer {
+      text-align: center;
+      margin-top: 48px;
+      color: var(--text-secondary);
+      font-size: 15px;
+    }
+
+    @media (max-width: 768px) {
+      .phones-row { gap: 16px; }
+      .phone-frame { width: 170px; height: 360px; padding: 7px; border-radius: 28px; }
+      .phone-frame::before { width: 56px; height: 14px; top: 12px; }
+      .phone-frame.phone-center { width: 185px; height: 390px; }
+      .phone-screen { border-radius: 22px; }
+      .phone-placeholder .phone-icon { font-size: 24px; }
+    }
+    @media (max-width: 480px) {
+      .phones-row { gap: 12px; }
+      .phone-frame.phone-outer { display: none; }
+    }
+
+    /* ─── Social Proof Strip ─── */
+    .proof-strip {
+      background: var(--bg);
+      padding: 48px 0;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .proof-items {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 64px;
+      flex-wrap: wrap;
+    }
+    .proof-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      text-align: center;
+    }
+    .proof-item-value {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: var(--text);
+      letter-spacing: -0.2px;
+    }
+    .proof-item-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    .proof-item .flag {
+      font-size: 18px;
+      line-height: 1;
+    }
+    @media (max-width: 600px) {
+      .proof-items { gap: 32px; }
+      .proof-item-value { font-size: 14px; }
+    }
+
     /* ─── Android Notify Modal ─── */
     .modal-backdrop {
       position: fixed;
@@ -1244,6 +1446,83 @@
     </div>
   </section>
 
+  <!-- ─── SCREENSHOTS ─── -->
+  <section class="screenshots-section section">
+    <div class="orb orb-green" style="top:30%;left:-150px;opacity:0.25;"></div>
+    <div class="container">
+      <div class="section-header text-center reveal">
+        <p class="section-label" style="text-align:center;">See it in action</p>
+        <h2 class="section-title" style="text-align:center;">The app.&#10;In your pocket.</h2>
+      </div>
+
+      <div class="phones-row reveal">
+        <!-- Phone 1: outer left -->
+        <div class="phone-frame phone-side phone-outer">
+          <div class="phone-screen">
+            <div class="phone-placeholder">
+              <span class="phone-icon">📊</span>
+              <div class="phone-label">BROWSE</div>
+              <div>Live predictions<br/>from the market</div>
+              <div class="phone-subtext" style="margin-top:14px;">Screenshot coming</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone 2: inner left -->
+        <div class="phone-frame phone-side">
+          <div class="phone-screen">
+            <div class="phone-placeholder">
+              <span class="phone-icon">👥</span>
+              <div class="phone-label">FRIEND GROUPS</div>
+              <div>Predict the people<br/>you actually know</div>
+              <div class="phone-subtext" style="margin-top:14px;">Screenshot coming</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone 3: CENTER (hero shot) -->
+        <div class="phone-frame phone-center">
+          <div class="phone-screen">
+            <div class="phone-placeholder">
+              <span class="phone-icon">🎯</span>
+              <div class="phone-label">VOTE WITH CRED</div>
+              <div>Watch percentages<br/>shift in real-time</div>
+              <div class="phone-subtext" style="margin-top:14px;">Screenshot coming</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone 4: inner right -->
+        <div class="phone-frame phone-side">
+          <div class="phone-screen">
+            <div class="phone-placeholder">
+              <span class="phone-icon">🏆</span>
+              <div class="phone-label">LEADERBOARD</div>
+              <div>Dual scores —<br/>friends and markets</div>
+              <div class="phone-subtext" style="margin-top:14px;">Screenshot coming</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Phone 5: outer right -->
+        <div class="phone-frame phone-side phone-outer">
+          <div class="phone-screen">
+            <div class="phone-placeholder">
+              <span class="phone-icon">📤</span>
+              <div class="phone-label">SHARE DRAMA</div>
+              <div>Every result becomes<br/>a shareable card</div>
+              <div class="phone-subtext" style="margin-top:14px;">Screenshot coming</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <p class="screenshots-footer reveal">
+        Designed for thumbs. Built for late-night group chats.
+      </p>
+    </div>
+  </section>
+
   <!-- ─── FEATURES GRID ─── -->
   <section class="features-section section">
     <div class="orb orb-purple" style="top:50%;left:50%;transform:translate(-50%,-50%);opacity:0.4;"></div>
@@ -1386,6 +1665,26 @@
           </div>
         </div>
         <p class="stats-sub">Built for groups of 4–8 close friends. Fueled by opinions. Settled by truth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── SOCIAL PROOF STRIP ─── -->
+  <section class="proof-strip">
+    <div class="container">
+      <div class="proof-items reveal">
+        <div class="proof-item">
+          <span class="proof-item-value"><span class="flag">🇳🇴</span> Made in Norway</span>
+          <span class="proof-item-label">Oslo · Independent</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-item-value">Launched April 2026</span>
+          <span class="proof-item-label">Available on iOS</span>
+        </div>
+        <div class="proof-item">
+          <span class="proof-item-value">Indie · Solo-built</span>
+          <span class="proof-item-label">By Even Kildal</span>
+        </div>
       </div>
     </div>
   </section>
