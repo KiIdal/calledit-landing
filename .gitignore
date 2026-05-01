@@ -1,3 +1,10 @@
 # Local Netlify folder
 .netlify
 .gstack/
+
+# macOS
+.DS_Store
+
+# Function dependencies — installed by Netlify on deploy
+netlify/functions/node_modules/
+netlify/functions/package-lock.json

@@ -1,0 +1,12 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["U3FRFAP934.no.even.calledit"],
+        "components": [
+          { "/": "/g/*", "comment": "Group invite share links" }
+        ]
+      }
+    ]
+  }
+}

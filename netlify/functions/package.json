@@ -1,0 +1,11 @@
+{
+  "name": "calledit-landing-functions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Netlify functions for calledit.one — rich share previews for /g/<code>",
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@supabase/supabase-js": "^2.45.0",
+    "satori": "^0.10.13"
+  }
+}

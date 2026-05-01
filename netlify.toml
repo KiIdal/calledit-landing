@@ -1,3 +1,25 @@
 [build]
-  command = ""
+  command = "cd netlify/functions && npm install"
   publish = "."
+  functions = "netlify/functions"
+
+# /g/<code>/og.png  →  PNG share preview (rendered by satori + resvg)
+# /g/<code>         →  HTML page with OG meta tags + iOS deep-link redirect
+# Order matters: the .png rule must come first so it doesn't get
+# swallowed by the more general /g/:code matcher.
+[[redirects]]
+  from = "/g/:code/og.png"
+  to = "/.netlify/functions/group-og?code=:code"
+  status = 200
+
+[[redirects]]
+  from = "/g/:code"
+  to = "/.netlify/functions/group-page?code=:code"
+  status = 200
+
+# AASA must be served as application/json — Apple's CDN strips the
+# file extension and rejects it otherwise.
+[[headers]]
+  for = "/.well-known/apple-app-site-association"
+  [headers.values]
+    Content-Type = "application/json"
