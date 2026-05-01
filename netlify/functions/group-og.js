@@ -123,6 +123,31 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: 'Invalid code' };
   }
 
+  // Diagnostic: ?debug=1 returns JSON describing what the function sees
+  // (env presence + RPC outcome). Lets us tell "env vars missing" from
+  // "RPC returned null" without spelunking through Netlify function logs.
+  if (event.queryStringParameters?.debug === '1') {
+    let rpcResult = null;
+    let rpcError = null;
+    try { rpcResult = await getGroupPreview(code); }
+    catch (e) { rpcError = String(e?.message || e); }
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code,
+        path: event.path,
+        env: {
+          hasUrl: !!process.env.SUPABASE_URL,
+          urlPrefix: (process.env.SUPABASE_URL || '').slice(0, 30),
+          hasAnonKey: !!process.env.SUPABASE_ANON_KEY,
+          anonKeyLen: (process.env.SUPABASE_ANON_KEY || '').length,
+        },
+        rpc: { result: rpcResult, error: rpcError },
+      }, null, 2),
+    };
+  }
+
   try {
     const [preview, fonts] = await Promise.all([
       getGroupPreview(code),
