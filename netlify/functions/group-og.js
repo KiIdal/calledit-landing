@@ -120,7 +120,10 @@ function renderTree(preview) {
 exports.handler = async (event) => {
   const code = event.queryStringParameters?.code;
   if (!isValidCode(code)) {
-    return { statusCode: 400, body: 'Invalid code' };
+    return {
+      statusCode: 400,
+      body: `Invalid code · received=${JSON.stringify(code)} · path=${event.path} · qs=${JSON.stringify(event.queryStringParameters)}`,
+    };
   }
 
   try {
