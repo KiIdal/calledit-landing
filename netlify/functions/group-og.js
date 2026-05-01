@@ -4,7 +4,7 @@
 
 const satori = require('satori').default || require('satori');
 const { Resvg } = require('@resvg/resvg-js');
-const { isValidCode, getGroupPreview, truncate, loadFonts, loadAdditionalAsset } = require('./_shared');
+const { isValidCode, extractCode, getGroupPreview, truncate, loadFonts, loadAdditionalAsset } = require('./_shared');
 
 const NEON = '#00FF87';
 const BG_TOP = '#0A0A0F';
@@ -118,12 +118,9 @@ function renderTree(preview) {
 }
 
 exports.handler = async (event) => {
-  const code = event.queryStringParameters?.code;
+  const code = extractCode(event);
   if (!isValidCode(code)) {
-    return {
-      statusCode: 400,
-      body: `Invalid code · received=${JSON.stringify(code)} · path=${event.path} · qs=${JSON.stringify(event.queryStringParameters)}`,
-    };
+    return { statusCode: 400, body: 'Invalid code' };
   }
 
   try {

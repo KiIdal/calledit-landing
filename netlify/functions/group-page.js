@@ -10,7 +10,7 @@
 //   3. Surface `apple-itunes-app` so Safari shows the smart banner
 //      (and, once the App Clip target ships, the Clip card).
 
-const { isValidCode, getGroupPreview, truncate } = require('./_shared');
+const { isValidCode, extractCode, getGroupPreview, truncate } = require('./_shared');
 
 const APP_STORE_URL = 'https://apps.apple.com/us/app/called-it-predict-friends/id6762042980';
 const ASC_APP_ID = '6762042980';
@@ -124,7 +124,7 @@ function buildHtml(code, preview) {
 }
 
 exports.handler = async (event) => {
-  const code = event.queryStringParameters?.code;
+  const code = extractCode(event);
   if (!isValidCode(code)) {
     return {
       statusCode: 404,

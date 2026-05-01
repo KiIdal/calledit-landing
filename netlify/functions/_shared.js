@@ -30,6 +30,21 @@ function isValidCode(code) {
   return typeof code === 'string' && /^[a-zA-Z0-9]{4,16}$/.test(code);
 }
 
+// Pulls the invite code out of the request. Netlify rewrites land here
+// with the ORIGINAL path on `event.path` (e.g. "/g/bb6d6aa2/og.png")
+// and an empty queryStringParameters — destination-side `?code=:code`
+// substitution in netlify.toml doesn't propagate through to function
+// invocations as we'd hope. So we parse the path directly. Falls back
+// to the qs in case Netlify behavior changes or the function is hit
+// via /.netlify/functions/<name>?code=… directly.
+function extractCode(event) {
+  const fromQs = event?.queryStringParameters?.code;
+  if (typeof fromQs === 'string' && fromQs.length > 0) return fromQs;
+  const path = (event?.path || '').replace(/\/+$/, '');
+  const m = path.match(/^\/g\/([a-zA-Z0-9]{4,16})(?:\/og\.png)?$/);
+  return m ? m[1] : null;
+}
+
 async function getGroupPreview(code) {
   const { data, error } = await supabase().rpc('get_group_preview', { p_code: code });
   if (error) {
@@ -112,4 +127,4 @@ async function loadAdditionalAsset(code, segment) {
   }
 }
 
-module.exports = { supabase, isValidCode, getGroupPreview, truncate, loadFonts, loadAdditionalAsset };
+module.exports = { supabase, isValidCode, extractCode, getGroupPreview, truncate, loadFonts, loadAdditionalAsset };
