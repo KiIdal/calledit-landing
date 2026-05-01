@@ -139,6 +139,8 @@ exports.handler = async (event) => {
           urlPrefix: (process.env.SUPABASE_URL || '').slice(0, 30),
           hasAnonKey: !!process.env.SUPABASE_ANON_KEY,
           anonKeyLen: (process.env.SUPABASE_ANON_KEY || '').length,
+          hasAnonKey2: !!process.env.SUPABASE_ANON_KEY_2,
+          anonKey2Prefix: (process.env.SUPABASE_ANON_KEY_2 || '').slice(0, 18),
         },
         rpc: raw,
       }, null, 2),

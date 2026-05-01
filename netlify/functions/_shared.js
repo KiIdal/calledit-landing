@@ -10,7 +10,10 @@
 const { createClient } = require('@supabase/supabase-js');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+// Prefer the new publishable key (shorter, paste-safe, less brittle when
+// pasted into env var UIs) and fall back to the legacy anon key. Either
+// works for read-only RPC calls against `get_group_preview`.
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY_2 || process.env.SUPABASE_ANON_KEY;
 
 let _supabase = null;
 function supabase() {
