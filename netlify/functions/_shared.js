@@ -46,12 +46,28 @@ function extractCode(event) {
 }
 
 async function getGroupPreview(code) {
-  const { data, error } = await supabase().rpc('get_group_preview', { p_code: code });
-  if (error) {
-    console.error('get_group_preview RPC error:', error.message);
+  const res = await supabase().rpc('get_group_preview', { p_code: code });
+  if (res.error) {
+    console.error('get_group_preview RPC error:', res.error.message);
     return null;
   }
-  return data; // null when code unknown
+  return res.data; // null when code unknown
+}
+
+// Debug helper — surfaces the full {data, error, status, statusText}
+// shape so we can see what supabase-js returned without console-only logs.
+async function getGroupPreviewRaw(code) {
+  try {
+    const res = await supabase().rpc('get_group_preview', { p_code: code });
+    return {
+      data: res.data,
+      error: res.error ? { message: res.error.message, code: res.error.code, hint: res.error.hint } : null,
+      status: res.status,
+      statusText: res.statusText,
+    };
+  } catch (e) {
+    return { thrown: String(e?.message || e) };
+  }
 }
 
 // Truncate to ~50 chars for the OG layout. We word-break on the last
@@ -127,4 +143,4 @@ async function loadAdditionalAsset(code, segment) {
   }
 }
 
-module.exports = { supabase, isValidCode, extractCode, getGroupPreview, truncate, loadFonts, loadAdditionalAsset };
+module.exports = { supabase, isValidCode, extractCode, getGroupPreview, getGroupPreviewRaw, truncate, loadFonts, loadAdditionalAsset };

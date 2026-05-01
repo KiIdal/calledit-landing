@@ -4,7 +4,7 @@
 
 const satori = require('satori').default || require('satori');
 const { Resvg } = require('@resvg/resvg-js');
-const { isValidCode, extractCode, getGroupPreview, truncate, loadFonts, loadAdditionalAsset } = require('./_shared');
+const { isValidCode, extractCode, getGroupPreview, getGroupPreviewRaw, truncate, loadFonts, loadAdditionalAsset } = require('./_shared');
 
 const NEON = '#00FF87';
 const BG_TOP = '#0A0A0F';
@@ -127,10 +127,7 @@ exports.handler = async (event) => {
   // (env presence + RPC outcome). Lets us tell "env vars missing" from
   // "RPC returned null" without spelunking through Netlify function logs.
   if (event.queryStringParameters?.debug === '1') {
-    let rpcResult = null;
-    let rpcError = null;
-    try { rpcResult = await getGroupPreview(code); }
-    catch (e) { rpcError = String(e?.message || e); }
+    const raw = await getGroupPreviewRaw(code);
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -143,7 +140,7 @@ exports.handler = async (event) => {
           hasAnonKey: !!process.env.SUPABASE_ANON_KEY,
           anonKeyLen: (process.env.SUPABASE_ANON_KEY || '').length,
         },
-        rpc: { result: rpcResult, error: rpcError },
+        rpc: raw,
       }, null, 2),
     };
   }
